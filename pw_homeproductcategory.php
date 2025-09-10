@@ -231,46 +231,53 @@ Class Pw_HomeProductcategory extends Module implements WidgetInterface
     public function getWidgetVariables($hookName = null, array $configuration = [])
     {
         $products = $this->getProducts();
-        $img_cat = $this->getCategoryImageUrl((int) Configuration::get('PW_HOME_PROD_CAT_CAT'));
+        $cat_info = $this->getCategoryInfo((int) Configuration::get('PW_HOME_PROD_CAT_CAT'));
 
         if (!empty($products)) {
             return [
                 'bgcolor' => $this->getConfigFieldsValues()['PW_HOME_PROD_CAT_BGCOLOR'],
                 'products' => $products,
-                'img_cat' => $img_cat,
+                'cat_info' => $cat_info,
                 'allProductsLink' => Context::getContext()->link->getCategoryLink($this->getConfigFieldsValues()['PW_HOME_PROD_CAT_CAT']),
             ];
-        } else {
-            return false;
         }
+        
+        return false;
     }
 
-    protected function getCategoryImageUrl($id_category, $imageType = 'category_default')
+    protected function getCategoryInfo($id_category, $imageType = 'category_default')
     {
+        
         // Get context
         $context = Context::getContext();
 
         // Get category object
         $category = new Category($id_category, $context->language->id);
-
+       
         // Check if category exists and has an image
         if (!Validate::isLoadedObject($category) || !$category->id_image) {
             return false;
         }
 
-        // Get image path
-        $image = new Image($category->id_image);
+        // Prepare result
+        $result = [
+            'name' => $category->name,
+            'image_url' => false,
+        ];
 
-        // Generate image URL
-        if (Validate::isLoadedObject($image)) {
-            return $context->link->getCatImageLink(
-                $category->link_rewrite,
-                $category->id,
-                $imageType
-            );
+        // Get image URL if exists
+        if ($category->id_image) {
+            $image = new Image($category->id_image);
+            if (Validate::isLoadedObject($image)) {
+                $result['image_url'] = $context->link->getCatImageLink(
+                    $category->link_rewrite,
+                    $category->id,
+                    $imageType
+                );
+            }
         }
 
-        return false;
+        return $result;
     }
 
     protected function getProducts()
