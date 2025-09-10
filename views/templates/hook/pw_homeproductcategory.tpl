@@ -11,8 +11,8 @@
     <!-- MODULE pw_homeproductcategory -->
     <section class="homeproductcategory" id="pw-homeproductcategory" style="--homeproductbg: {$bgcolor}">
         <h4 class="h4">{l s='Our Offers' mod='pw_homeproductcategory'} {$cat_info['name']}</h4>
-        {if !empty($cat_info['img_cat'])}
-            <img src="{$cat_info['img_cat']}" alt="">
+        {if !empty($cat_info['image_url'])}
+            <img src="{$cat_info['image_url']}" alt="">
         {/if}
         <div class="carrou-products">
             <div class="products cycle-slideshow"
